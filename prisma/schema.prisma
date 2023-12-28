@@ -23,14 +23,14 @@ model Tag {
   name   String         @unique
   type   TagType        @default(TAG)
   link   Int?
-  images ImagesOnTags[]
+  images Image[]
 }
 
 model Image {
   id          Int            @id @default(autoincrement())
   hash        String         @unique
   average     String
-  tags        ImagesOnTags[]
+  tags        Tag[]
   explicit    Boolean        @default(false)
   datetime    DateTime?
   uploaded    DateTime       @default(now())
@@ -45,11 +45,12 @@ model Image {
   height      Int
 }
 
-model ImagesOnTags {
-  tag     Tag   @relation(fields: [tagId], references: [id])
-  tagId   Int
-  image   Image @relation(fields: [imageId], references: [id])
-  imageId Int
+// model ImagesOnTags {
+//   tag     Tag   @relation(fields: [tagId, tagName], references: [id, name])
+//   tagId   Int
+//   tagName String
+//   image   Image @relation(fields: [imageId], references: [id])
+//   imageId Int
 
-  @@id([tagId, imageId])
-}
+//   @@id([tagId, imageId])
+// }

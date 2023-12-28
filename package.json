@@ -10,11 +10,14 @@
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",
+    "axios": "^1.6.3",
+    "buffer-image-size": "^0.6.4",
     "md5": "^2.3.0",
     "next": "14.0.4",
     "nextjs-toploader": "^1.6.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/md5": "^2.3.5",
