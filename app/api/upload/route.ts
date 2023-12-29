@@ -64,9 +64,11 @@ export const POST = async (request: NextRequest) => {
   const newImage = await prisma.image.create({
     data: {
       hash: hash,
-      average: '',
+      average: '', // todo))
       explicit: formData.get('explicit') ? true : false,
-      source: formData.get('source') as string,
+      source: formData.get('source')
+        ? (formData.get('source') as string)
+        : null,
       filesize: file.size,
       width: dimensions.width,
       height: dimensions.height,
