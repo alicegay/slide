@@ -26,7 +26,7 @@ const NavBar = () => {
           type="text"
           placeholder="Search tags"
           className="input input-bordered bg-slate-200 text-slate-800 w-full"
-          value={params.tags}
+          defaultValue={params.tags}
         />
         <button onClick={() => {}} className="btn btn-ghost">
           Search

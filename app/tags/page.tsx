@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 const tagMap: Record<TagType, { label: string; color: string }> = {
   TAG: { label: 'Tag', color: 'bg-slate-600' },
-  ARTIST: { label: 'Artist', color: 'bg-red-800' },
+  ARTIST: { label: 'Artist', color: 'bg-red-600' },
   SERIES: { label: 'Series', color: 'bg-violet-600' },
   CHARACTER: { label: 'Character', color: 'bg-green-600' },
   INFO: { label: 'Info', color: 'bg-amber-600' },

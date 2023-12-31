@@ -20,3 +20,16 @@
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-end-rgb));
 } */
+
+.sidebar {
+  width: 18rem;
+  min-width: 18rem;
+  max-width: 18rem;
+}
+.thumbnail-image {
+  max-height: calc((100vh - 96px) / 5 - 12px);
+}
+.view-image {
+  height: calc(100vh - 96px);
+  object-fit: contain;
+}
