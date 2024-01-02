@@ -27,14 +27,15 @@ model Tag {
 }
 
 model Image {
-  id          Int            @id @default(autoincrement())
-  hash        String         @unique
+  hash        String         @id @unique
   average     String
   tags        Tag[]
-  explicit    Boolean        @default(false)
   datetime    DateTime?
   uploaded    DateTime       @default(now())
   source      String?
+  parentHash  String?
+  parent      Image?         @relation("ParentChildren", fields: [parentHash], references: [hash])
+  children    Image[]        @relation("ParentChildren")
   title       String?
   description String?
   text        String?

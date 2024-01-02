@@ -7,13 +7,10 @@ interface Props {
   }
 }
 
-export const GET = async (request: NextRequest, { params }: Props) => {
+export const PATCH = async (request: NextRequest, { params }: Props) => {
   const image = await prisma.image.findUnique({
     where: {
       hash: params.hash,
-    },
-    include: {
-      tags: true,
     },
   })
 
@@ -22,6 +19,4 @@ export const GET = async (request: NextRequest, { params }: Props) => {
       { error: 'Image does not exist.' },
       { status: 404 },
     )
-
-  return NextResponse.json(image, { status: 200 })
 }

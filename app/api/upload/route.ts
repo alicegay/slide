@@ -65,10 +65,10 @@ export const POST = async (request: NextRequest) => {
     data: {
       hash: hash,
       average: '', // todo))
-      explicit: formData.get('explicit') ? true : false,
       source: formData.get('source')
         ? (formData.get('source') as string)
         : null,
+      filetype: file.type.split('/')[1],
       filesize: file.size,
       width: dimensions.width,
       height: dimensions.height,
@@ -77,6 +77,9 @@ export const POST = async (request: NextRequest) => {
           create: { name: tag },
           where: { name: tag },
         })),
+        connect: {
+          name: formData.get('explicit') ? 'explicit' : 'safe',
+        },
       },
     },
   })

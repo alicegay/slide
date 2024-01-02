@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import path from 'path'
+import { unlink } from 'fs/promises'
 import prisma from '@/prisma/client'
 
 interface Props {
@@ -7,13 +9,10 @@ interface Props {
   }
 }
 
-export const GET = async (request: NextRequest, { params }: Props) => {
+export const DELETE = async (request: NextRequest, { params }: Props) => {
   const image = await prisma.image.findUnique({
     where: {
       hash: params.hash,
-    },
-    include: {
-      tags: true,
     },
   })
 
@@ -23,5 +22,13 @@ export const GET = async (request: NextRequest, { params }: Props) => {
       { status: 404 },
     )
 
-  return NextResponse.json(image, { status: 200 })
+  const deleteImage = await prisma.image.delete({
+    where: {
+      hash: params.hash,
+    },
+  })
+
+  await unlink(path.join(process.cwd(), 'public/image/' + params.hash))
+
+  return new Response(null, { status: 204 })
 }

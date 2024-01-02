@@ -163,8 +163,8 @@ const ViewPage = async ({ params }: Props) => {
           )}
           {image.tags.some((e) => e.name === 'explicit') && (
             <Link
-              className="btn btn-sm justify-start text-red-600"
-              href="/search/r18"
+              className="btn btn-sm justify-between text-red-600"
+              href="/search/explicit"
             >
               <span>Explicit</span>
               <span className="text-slate-500">
@@ -172,15 +172,15 @@ const ViewPage = async ({ params }: Props) => {
               </span>
             </Link>
           )}
-          <div className="btn btn-sm justify-start">
+          <div className="btn btn-sm justify-between">
             {Math.round(image.filesize / 10.24) / 100 + ' KB ' + image.filetype}
           </div>
-          <div className="btn btn-sm justify-start">
+          <div className="btn btn-sm justify-between">
             {image.width + ' × ' + image.height}
           </div>
           {image.source && (
             <a
-              className="btn btn-sm justify-start overflow-hidden"
+              className="btn btn-sm justify-between overflow-hidden"
               href={image.source}
               target="_blank"
             >
@@ -188,7 +188,7 @@ const ViewPage = async ({ params }: Props) => {
             </a>
           )}
           <Link
-            className="btn btn-sm justify-start text-amber-600"
+            className="btn btn-sm justify-between text-amber-600"
             href={'/edit/' + params.hash}
           >
             Edit

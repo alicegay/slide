@@ -21,6 +21,11 @@
   background: rgb(var(--background-end-rgb));
 } */
 
+.uploadbar {
+  width: 40;
+  min-width: 40rem;
+  max-width: 40rem;
+}
 .sidebar {
   width: 18rem;
   min-width: 18rem;
