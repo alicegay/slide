@@ -7,12 +7,19 @@ import prisma from '@/prisma/client'
 import formatZodError from '@/app/lib/formatZodError'
 import sizeOf from 'buffer-image-size'
 
-const schema = z.object({
+export const schema = z.object({
   tags: z.string(),
   source: z
     .string()
     .url({ message: 'Source URL is invalid' })
     .or(z.string().length(0)),
+  parent: z
+    .string()
+    .length(32, { message: 'Parent Hash is invalid' })
+    .or(z.string().length(0)),
+  title: z.string(),
+  description: z.string(),
+  translation: z.string(),
 })
 
 export const POST = async (request: NextRequest) => {
@@ -39,6 +46,10 @@ export const POST = async (request: NextRequest) => {
   const validation = schema.safeParse({
     tags: formData.get('tags'),
     source: formData.get('source'),
+    parent: formData.get('parent'),
+    title: formData.get('title'),
+    description: formData.get('description'),
+    translation: formData.get('translation'),
   })
   if (!validation.success) {
     return NextResponse.json(
@@ -61,6 +72,19 @@ export const POST = async (request: NextRequest) => {
     ? (formData.get('tags') as string).split(' ')
     : []
 
+  if (formData.get('parent')) {
+    const parentImage = await prisma.image.findUnique({
+      where: {
+        hash: formData.get('parent') as string,
+      },
+    })
+    if (!parentImage)
+      return NextResponse.json(
+        { error: 'Parent Image Hash does not exist.' },
+        { status: 400 },
+      )
+  }
+
   const newImage = await prisma.image.create({
     data: {
       hash: hash,
@@ -81,6 +105,20 @@ export const POST = async (request: NextRequest) => {
           name: formData.get('explicit') ? 'explicit' : 'safe',
         },
       },
+      parent: formData.get('parent')
+        ? {
+            connect: {
+              hash: formData.get('parent') as string,
+            },
+          }
+        : {},
+      title: formData.get('title') ? (formData.get('title') as string) : null,
+      description: formData.get('description')
+        ? (formData.get('description') as string)
+        : null,
+      translation: formData.get('translation')
+        ? (formData.get('translation') as string)
+        : null,
     },
   })
 

@@ -22,7 +22,8 @@ model Tag {
   id     Int            @id @default(autoincrement())
   name   String         @unique
   type   TagType        @default(TAG)
-  link   Int?
+  parents Tag[]         @relation("TagLink")
+  children Tag[]        @relation("TagLink")
   images Image[]
 }
 
@@ -34,24 +35,13 @@ model Image {
   uploaded    DateTime       @default(now())
   source      String?
   parentHash  String?
-  parent      Image?         @relation("ParentChildren", fields: [parentHash], references: [hash])
-  children    Image[]        @relation("ParentChildren")
+  parent      Image?         @relation("ImageLink", fields: [parentHash], references: [hash])
+  children    Image[]        @relation("ImageLink")
   title       String?
   description String?
-  text        String?
   translation String?
-  filetype    String?
+  filetype    String
   filesize    Int
   width       Int
   height      Int
 }
-
-// model ImagesOnTags {
-//   tag     Tag   @relation(fields: [tagId, tagName], references: [id, name])
-//   tagId   Int
-//   tagName String
-//   image   Image @relation(fields: [imageId], references: [id])
-//   imageId Int
-
-//   @@id([tagId, imageId])
-// }

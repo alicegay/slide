@@ -2,8 +2,8 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react'
 import md5 from 'md5'
 import Link from 'next/link'
-import axios, { AxiosError, AxiosRequestConfig } from 'axios'
-import { RedirectType, notFound, useRouter } from 'next/navigation'
+import axios, { AxiosRequestConfig } from 'axios'
+import { notFound, useRouter, usePathname } from 'next/navigation'
 import { Prisma } from '@prisma/client'
 
 interface Props {
@@ -15,9 +15,13 @@ interface Props {
 const imageWithTags = Prisma.validator<Prisma.ImageDefaultArgs>()({
   include: { tags: true },
 })
+
 type ImageWithTags = Prisma.ImageGetPayload<typeof imageWithTags>
 
 const UploadEditPage = ({ searchParams }: Props) => {
+  const router = useRouter()
+  const pathname = usePathname()
+
   const editHash = searchParams.hash
   useEffect(() => {
     if (editHash) {
@@ -33,9 +37,7 @@ const UploadEditPage = ({ searchParams }: Props) => {
           notFound()
         })
     }
-  }, [])
-
-  const router = useRouter()
+  }, [pathname, searchParams])
 
   const [selectedImage, setSelectedImage] = useState<File>()
   const [hash, setHash] = useState<string>()
@@ -44,6 +46,16 @@ const UploadEditPage = ({ searchParams }: Props) => {
   const [explicit, setExplicit] = useState(false)
   const [editImage, setEditImage] = useState<ImageWithTags>()
   const [error, setError] = useState<string>()
+
+  useEffect(() => {
+    setSelectedImage(undefined)
+    setHash(undefined)
+    setShowHashError(false)
+    setUploadProgress(0)
+    setExplicit(false)
+    setEditImage(undefined)
+    setError(undefined)
+  }, [pathname, searchParams])
 
   const tagsRef = useRef(null)
 
@@ -90,6 +102,7 @@ const UploadEditPage = ({ searchParams }: Props) => {
       })
       .catch((error) => {
         console.warn(error)
+        setUploadProgress(0)
         if (error.response.data && error.response.data.error)
           setError('Upload Error:   ' + error.response.data.error)
         else setError('Error: ' + error.response.status)
@@ -98,7 +111,23 @@ const UploadEditPage = ({ searchParams }: Props) => {
 
   const edit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    //axios.patch('/api/edit/' + editHash)
+    const formData = new FormData(event.currentTarget)
+    const options: AxiosRequestConfig = {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }
+    axios
+      .patch('/api/edit/' + editHash, formData)
+      .then((res) => {
+        console.log('EDIT SUCCESS')
+        setError(undefined)
+        router.push('/view/' + editHash)
+      })
+      .catch((error) => {
+        console.warn(error)
+        if (error.response.data && error.response.data.error)
+          setError('Error:   ' + error.response.data.error)
+        else setError('Error: ' + error.response.status)
+      })
   }
 
   const deleteImage = () => {
@@ -173,7 +202,9 @@ const UploadEditPage = ({ searchParams }: Props) => {
         )}
 
         <div className="join">
-          <div className="bg-base-300 rounded-lg px-6 py-3 join-item">Hash</div>
+          <div className="bg-base-300 rounded-lg px-6 py-3 w-32 join-item">
+            Hash
+          </div>
           <div className="input w-full bg-base-200 join-item pt-3">{hash}</div>
         </div>
 
@@ -207,7 +238,7 @@ const UploadEditPage = ({ searchParams }: Props) => {
             />
           </label>
           <div
-            className="btn btn-sm"
+            className="btn btn-sm w-32"
             onClick={async () => {
               try {
                 // @ts-ignore
@@ -226,7 +257,7 @@ const UploadEditPage = ({ searchParams }: Props) => {
         </div>
 
         <div className="join">
-          <div className="bg-base-300 rounded-lg px-6 py-3 join-item">
+          <div className="bg-base-300 rounded-lg px-6 py-3 w-32 join-item">
             Source
           </div>
           <input
@@ -240,20 +271,54 @@ const UploadEditPage = ({ searchParams }: Props) => {
           />
         </div>
 
-        {/* <div className="join">
-          <div className="bg-base-300 rounded-lg px-6 py-3 join-item">
+        <div className="join">
+          <div className="bg-base-300 rounded-lg px-6 py-3 w-32 join-item">
             Parent
           </div>
           <input
             name="parent"
             type="text"
             className="input w-full bg-base-200 join-item"
-            placeholder="https://"
             spellCheck={false}
             autoComplete="off"
-            defaultValue={(editHash && editImage?.) ?? undefined}
+            defaultValue={(editHash && editImage?.parentHash) ?? undefined}
           />
-        </div> */}
+        </div>
+
+        <div className="collapse bg-base-200">
+          <input type="checkbox" />
+          <div className="collapse-title font-medium text-center">More...</div>
+          <div className="collapse-content grid grid-cols-1 flex-grow gap-y-2 content-start">
+            <div className="join">
+              <div className="bg-base-300 rounded-lg px-6 py-3 w-32 join-item">
+                Title
+              </div>
+              <input
+                name="title"
+                type="text"
+                className="input w-full bg-base-100 join-item"
+                autoComplete="off"
+                defaultValue={(editHash && editImage?.title) ?? undefined}
+              />
+            </div>
+
+            <textarea
+              name="description"
+              className="textarea w-full bg-base-100"
+              placeholder="Description"
+              autoComplete="off"
+              defaultValue={(editHash && editImage?.description) ?? undefined}
+            />
+
+            <textarea
+              name="translation"
+              className="textarea w-full bg-base-100"
+              placeholder="Translation"
+              autoComplete="off"
+              defaultValue={(editHash && editImage?.translation) ?? undefined}
+            />
+          </div>
+        </div>
 
         <div className="flex gap-x-2 items-end justify-between">
           {!editHash ? (
@@ -266,9 +331,13 @@ const UploadEditPage = ({ searchParams }: Props) => {
               <button
                 className="btn btn-success w-32"
                 type="submit"
-                //disabled={showHashError || !selectedImage || uploadProgress > 0}
+                disabled={showHashError || !selectedImage || uploadProgress > 0}
               >
-                Upload
+                {uploadProgress > 0 ? (
+                  <span className="loading loading-spinner loading-sm" />
+                ) : (
+                  'Upload'
+                )}
               </button>
             </>
           ) : (
