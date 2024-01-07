@@ -88,6 +88,7 @@ const main = async () => {
       height: image.height,
       description: image.text_orig ?? null,
       translation: image.text_tl ?? null,
+      uploaded: new Date(new Date('2024').getTime() + image.id).toISOString(),
     })),
   })
   console.log('   ...IMAGE CREATE DONE')

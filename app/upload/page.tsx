@@ -232,7 +232,7 @@ const UploadEditPage = ({ searchParams }: Props) => {
               type="checkbox"
               className="toggle toggle-error"
               checked={explicit}
-              onClick={() => {
+              onChange={() => {
                 setExplicit(!explicit)
               }}
             />

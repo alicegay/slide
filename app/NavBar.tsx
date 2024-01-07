@@ -1,9 +1,21 @@
 'use client'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 
 const NavBar = () => {
-  const params = useParams()
+  const router = useRouter()
+  const pathname = usePathname()
+  const params = useParams<{ tags: string }>()
+  const urlTags = params.tags
+    ? String(params.tags).replaceAll('%20', ' ')
+    : null
+
+  const [tags, setTags] = useState<string>()
+
+  useEffect(() => {
+    if (urlTags) setTags(urlTags)
+  }, [pathname, params])
 
   return (
     <div className="navbar bg-primary">
@@ -26,11 +38,19 @@ const NavBar = () => {
           type="text"
           placeholder="Search tags"
           className="input input-bordered bg-slate-200 text-slate-800 w-full"
-          defaultValue={params.tags}
+          value={tags}
+          onChange={(e) => {
+            setTags(e.currentTarget.value)
+          }}
         />
-        <button onClick={() => {}} className="btn btn-ghost">
+        <div
+          onClick={() => {
+            router.push('/search/' + tags)
+          }}
+          className="btn btn-ghost"
+        >
           Search
-        </button>
+        </div>
         <button onClick={() => {}} className="btn btn-ghost">
           Slideshow
         </button>

@@ -1,3 +1,4 @@
+import formatSource from '@/app/lib/formatSource'
 import prisma from '@/prisma/client'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -184,7 +185,7 @@ const ViewPage = async ({ params }: Props) => {
               href={image.source}
               target="_blank"
             >
-              {image.source}
+              {formatSource(image.source)}
             </a>
           )}
           <Link
