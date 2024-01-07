@@ -68,9 +68,19 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json({ error: 'Image upload failed.' }, { status: 500 })
   }
 
-  const tags = formData.get('tags')
+  const tagsArray = formData.get('tags')
     ? (formData.get('tags') as string).split(' ')
     : []
+  const tagArray = await prisma.tag.findMany({
+    where: {
+      OR: tagsArray.map((tag) => ({ name: tag })),
+    },
+    include: { parents: true },
+  })
+  const tagParentArray = tagArray
+    .filter((tag) => tag.parents.length > 0)
+    .flatMap((tag) => tag.parents.map((parent) => parent.name))
+  const tags = tagsArray.concat(tagParentArray)
 
   if (formData.get('parent')) {
     const parentImage = await prisma.image.findUnique({

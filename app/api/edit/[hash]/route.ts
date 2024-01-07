@@ -42,9 +42,19 @@ export const PATCH = async (request: NextRequest, { params }: Props) => {
     )
   }
 
-  const tags = formData.get('tags')
+  const tagsArray = formData.get('tags')
     ? (formData.get('tags') as string).split(' ')
     : []
+  const tagArray = await prisma.tag.findMany({
+    where: {
+      OR: tagsArray.map((tag) => ({ name: tag })),
+    },
+    include: { parents: true },
+  })
+  const tagParentArray = tagArray
+    .filter((tag) => tag.parents.length > 0)
+    .flatMap((tag) => tag.parents.map((parent) => parent.name))
+  const tags = tagsArray.concat(tagParentArray)
 
   const origTags = image.tags.map((tag) => tag.name)
   const explicit = formData.get('explicit') ? 'explicit' : 'safe'
@@ -103,5 +113,5 @@ export const PATCH = async (request: NextRequest, { params }: Props) => {
     },
   })
 
-  return NextResponse.json({}, { status: 200 })
+  return NextResponse.json(editedImage, { status: 200 })
 }

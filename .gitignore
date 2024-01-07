@@ -38,3 +38,5 @@ next-env.d.ts
 
 public/image/*
 public/thumbnail/*
+prisma/images.json
+prisma/tags.json
