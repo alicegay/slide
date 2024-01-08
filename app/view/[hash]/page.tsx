@@ -16,6 +16,8 @@ const ViewPage = async ({ params }: Props) => {
     },
     include: {
       tags: { orderBy: { name: 'asc' } },
+      parent: true,
+      children: { orderBy: { uploaded: 'desc' } },
     },
   })
 
@@ -199,6 +201,76 @@ const ViewPage = async ({ params }: Props) => {
       <div className="w-full view-image">
         <img src={'/image/' + params.hash} className="view-image" />
       </div>
+      {(image.parent ||
+        image.children.length > 0 ||
+        image.title ||
+        image.description ||
+        image.translation) && (
+        <div className="flex flex-col gap-y-2 sidebar">
+          {(image.title || image.description) && (
+            <div className="card bg-base-200">
+              <div className="card-body py-2 px-4">
+                {image.title && (
+                  <h2 className="card-title whitespace-pre-line">
+                    {image.title}
+                  </h2>
+                )}
+                {image.description && (
+                  <p className="whitespace-pre-line">{image.description}</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {image.translation && (
+            <div className="card bg-base-200">
+              <div className="card-body py-2 px-4 whitespace-pre-line">
+                <p>{image.translation}</p>
+              </div>
+            </div>
+          )}
+
+          {image.parent && (
+            <>
+              <span className="text-sm">PARENT</span>
+              <div className="card bg-base-200">
+                <div className="card-body py-2 px-4 ">
+                  <Link
+                    className="flex thumbnail-image"
+                    href={'/view/' + image.parent.hash}
+                  >
+                    <img
+                      className="object-contain"
+                      src={'/thumbnail/' + image.parent.hash + '.webp'}
+                    />
+                  </Link>
+                </div>
+              </div>
+            </>
+          )}
+
+          {image.children.length > 0 && (
+            <>
+              <span className="text-sm">CHILDREN</span>
+              {image.children.map((child) => (
+                <div className="card bg-base-200">
+                  <div className="card-body py-2 px-4 ">
+                    <Link
+                      className="flex thumbnail-image"
+                      href={'/view/' + child.hash}
+                    >
+                      <img
+                        className={'object-contain'}
+                        src={'/thumbnail/' + child.hash + '.webp'}
+                      />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      )}
     </div>
   )
 }

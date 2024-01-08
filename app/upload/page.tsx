@@ -345,9 +345,14 @@ const UploadEditPage = ({ searchParams }: Props) => {
               <div className="btn btn-error w-32" onClick={deleteImage}>
                 Delete
               </div>
-              <button className="btn btn-warning w-32" type="submit">
-                Edit
-              </button>
+              <div className="flex gap-x-2">
+                <Link className="btn w-32" href={'/view/' + editHash}>
+                  Cancel
+                </Link>
+                <button className="btn btn-warning w-32" type="submit">
+                  Edit
+                </button>
+              </div>
             </>
           )}
         </div>
