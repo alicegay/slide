@@ -258,7 +258,13 @@ const ViewPage = async ({ params }: Props) => {
                     href={'/view/' + image.parent.hash}
                   >
                     <img
-                      className="object-contain"
+                      className={
+                        'object-contain' +
+                        (!explicit &&
+                        image.parent.tags.some((e) => e.name === 'explicit')
+                          ? ' blur-md hover:blur-none'
+                          : '')
+                      }
                       src={'/thumbnail/' + image.parent.hash + '.webp'}
                     />
                   </Link>
