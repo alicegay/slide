@@ -77,10 +77,12 @@ const ViewPage = async ({ params }: Props) => {
                 tag.type === 'CHARACTER' && (
                   <Link
                     key={tag.id}
-                    className="btn btn-sm justify-between text-green-600"
+                    className="btn btn-sm justify-between flex-nowrap text-green-600"
                     href={'/search/' + tag.name}
                   >
-                    <span>{tag.name.replaceAll('_', ' ')}</span>
+                    <span className="overflow-hidden whitespace-nowrap text-ellipsis">
+                      {tag.name.replaceAll('_', ' ')}
+                    </span>
                     <span className="text-slate-500">
                       {tagCount.find((e) => e.id === tag.id)?._count.images}
                     </span>
@@ -97,10 +99,12 @@ const ViewPage = async ({ params }: Props) => {
                 tag.type === 'SERIES' && (
                   <Link
                     key={tag.id}
-                    className="btn btn-sm justify-between text-violet-600"
+                    className="btn btn-sm justify-between flex-nowrap text-violet-600"
                     href={'/search/' + tag.name}
                   >
-                    <span>{tag.name.replaceAll('_', ' ')}</span>
+                    <span className="overflow-hidden whitespace-nowrap text-ellipsis">
+                      {tag.name.replaceAll('_', ' ')}
+                    </span>
                     <span className="text-slate-500">
                       {tagCount.find((e) => e.id === tag.id)?._count.images}
                     </span>
@@ -117,10 +121,12 @@ const ViewPage = async ({ params }: Props) => {
                 tag.type === 'INFO' && (
                   <Link
                     key={tag.id}
-                    className="btn btn-sm justify-between text-amber-600"
+                    className="btn btn-sm justify-between flex-nowrap text-amber-600"
                     href={'/search/' + tag.name}
                   >
-                    <span>{tag.name.replaceAll('_', ' ')}</span>
+                    <span className="overflow-hidden whitespace-nowrap text-ellipsis">
+                      {tag.name.replaceAll('_', ' ')}
+                    </span>
                     <span className="text-slate-500">
                       {tagCount.find((e) => e.id === tag.id)?._count.images}
                     </span>
@@ -139,10 +145,12 @@ const ViewPage = async ({ params }: Props) => {
                 tag.name !== 'explicit' && (
                   <Link
                     key={tag.id}
-                    className="btn btn-sm justify-between"
+                    className="btn btn-sm justify-between flex-nowrap"
                     href={'/search/' + tag.name}
                   >
-                    <span>{tag.name.replaceAll('_', ' ')}</span>
+                    <span className="overflow-hidden whitespace-nowrap text-ellipsis">
+                      {tag.name.replaceAll('_', ' ')}
+                    </span>
                     <span className="text-slate-500">
                       {tagCount.find((e) => e.id === tag.id)?._count.images}
                     </span>
@@ -183,11 +191,13 @@ const ViewPage = async ({ params }: Props) => {
           </div>
           {image.source && (
             <a
-              className="btn btn-sm justify-between overflow-hidden"
+              className="btn btn-sm justify-between"
               href={image.source}
               target="_blank"
             >
-              {formatSource(image.source)}
+              <span className="overflow-hidden whitespace-nowrap text-ellipsis">
+                {formatSource(image.source)}
+              </span>
             </a>
           )}
           <Link

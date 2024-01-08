@@ -2,8 +2,14 @@ import prisma from '@/prisma/client'
 import Link from 'next/link'
 
 interface Props {
-  params: { tags: string }
-  searchParams: { page: number }
+  params: {
+    tags: string
+  }
+  searchParams: {
+    page: number
+    sort: string
+    dir: string
+  }
 }
 
 const SearchPage = async ({ params, searchParams }: Props) => {
@@ -11,6 +17,11 @@ const SearchPage = async ({ params, searchParams }: Props) => {
     ? String(params.tags).replaceAll('%20', ' ').toLowerCase().split(' ')
     : []
 
+  const sort = searchParams.sort
+  const sortDir = searchParams.dir == 'asc' ? 'asc' : 'desc'
+  const sortUrlAdd =
+    (searchParams.sort ? '&sort=' + sort : '') +
+    (searchParams.dir ? '&dir=' + sortDir : '')
   const page = searchParams.page ? Number(searchParams.page) : 1
   const pageAmount = 24
   const query = search.map((tag: string) =>
@@ -33,9 +44,7 @@ const SearchPage = async ({ params, searchParams }: Props) => {
   const images = await prisma.image.findMany({
     take: pageAmount,
     skip: pageAmount * (page - 1),
-    orderBy: {
-      uploaded: 'desc',
-    },
+    orderBy: sort == 'hash' ? { hash: sortDir } : { uploaded: sortDir },
     where: {
       AND: query,
     },
@@ -80,31 +89,46 @@ const SearchPage = async ({ params, searchParams }: Props) => {
 
       <div className="join flex justify-center mb-4">
         {page >= 4 && (
-          <Link href="?page=1" className="join-item btn">
+          <Link href={'?page=1' + sortUrlAdd} className="join-item btn">
             1
           </Link>
         )}
         {page >= 5 && <div className="join-item btn btn-disabled">...</div>}
         {page >= 3 && (
-          <Link href={'?page=' + (page - 2)} className="join-item btn">
+          <Link
+            href={'?page=' + (page - 2) + sortUrlAdd}
+            className="join-item btn"
+          >
             {page - 2}
           </Link>
         )}
         {page >= 2 && (
-          <Link href={'?page=' + (page - 1)} className="join-item btn">
+          <Link
+            href={'?page=' + (page - 1) + sortUrlAdd}
+            className="join-item btn"
+          >
             {page - 1}
           </Link>
         )}
-        <Link href={'?page=' + page} className="join-item btn btn-active">
+        <Link
+          href={'?page=' + page + sortUrlAdd}
+          className="join-item btn btn-active"
+        >
           {page}
         </Link>
         {page < pageCount - 1 && (
-          <Link href={'?page=' + (page + 1)} className="join-item btn">
+          <Link
+            href={'?page=' + (page + 1) + sortUrlAdd}
+            className="join-item btn"
+          >
             {page + 1}
           </Link>
         )}
         {page < pageCount - 2 && (
-          <Link href={'?page=' + (page + 2)} className="join-item btn">
+          <Link
+            href={'?page=' + (page + 2) + sortUrlAdd}
+            className="join-item btn"
+          >
             {page + 2}
           </Link>
         )}
@@ -112,7 +136,10 @@ const SearchPage = async ({ params, searchParams }: Props) => {
           <div className="join-item btn btn-disabled">...</div>
         )}
         {page < pageCount && (
-          <Link href={'?page=' + pageCount} className="join-item btn">
+          <Link
+            href={'?page=' + pageCount + sortUrlAdd}
+            className="join-item btn"
+          >
             {pageCount}
           </Link>
         )}

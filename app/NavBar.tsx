@@ -2,6 +2,21 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams, usePathname, useRouter } from 'next/navigation'
+import { MdExpandMore, MdExpandLess } from 'react-icons/md'
+
+enum Sort {
+  UPLOADED,
+  HASH,
+}
+enum SortDirection {
+  DESC,
+  ASC,
+}
+const sortMap: Record<Sort, string> = {
+  0: 'Uploaded',
+  1: 'Hash',
+}
+const sortArray = [Sort.UPLOADED, Sort.HASH]
 
 const NavBar = () => {
   const router = useRouter()
@@ -12,6 +27,10 @@ const NavBar = () => {
     : null
 
   const [tags, setTags] = useState<string>()
+  const [sort, setSort] = useState<Sort>(Sort.UPLOADED)
+  const [sortDirection, setSortDirection] = useState<SortDirection>(
+    SortDirection.DESC,
+  )
 
   useEffect(() => {
     if (urlTags) setTags(urlTags)
@@ -34,26 +53,71 @@ const NavBar = () => {
         </Link>
       </div>
       <div className="flex-1 gap-2">
-        <input
-          type="text"
-          placeholder="Search tags"
-          className="input input-bordered bg-slate-200 text-slate-800 w-full"
-          value={tags}
-          onChange={(e) => {
-            setTags(e.currentTarget.value)
-          }}
-        />
+        <div className="flex w-full join">
+          <input
+            type="text"
+            placeholder="Search tags"
+            className="input input-bordered bg-slate-200 text-slate-800 w-full join-item"
+            value={tags}
+            onChange={(e) => {
+              setTags(e.currentTarget.value)
+            }}
+          />
+          <div className="dropdown dropdown-end join-item">
+            <div tabIndex={0} className="btn join-item w-40">
+              {sortMap[sort] + ' '}
+              {sortDirection == SortDirection.DESC ? (
+                <MdExpandMore />
+              ) : (
+                <MdExpandLess />
+              )}
+            </div>
+            <ul
+              tabIndex={0}
+              className="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-40"
+            >
+              {sortArray.map((s) => (
+                <li>
+                  <div
+                    onClick={() => {
+                      if (sort === s)
+                        setSortDirection(
+                          sortDirection === SortDirection.DESC
+                            ? SortDirection.ASC
+                            : SortDirection.DESC,
+                        )
+                      setSort(s)
+                    }}
+                  >
+                    {sortMap[s]}{' '}
+                    {sortDirection === SortDirection.DESC ? (
+                      <MdExpandLess />
+                    ) : (
+                      <MdExpandMore />
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
         <div
           onClick={() => {
-            router.push('/search/' + tags)
+            let sortUrl = ''
+            if (sort !== Sort.UPLOADED && sortDirection !== SortDirection.DESC)
+              sortUrl = '?sort=' + sortMap[sort].toLowerCase() + '&dir=asc'
+            else if (sort !== Sort.UPLOADED)
+              sortUrl = '?sort=' + sortMap[sort].toLowerCase()
+            else if (sortDirection !== SortDirection.DESC) sortUrl = '?dir=asc'
+            router.push('/search/' + tags + sortUrl)
           }}
           className="btn btn-ghost"
         >
           Search
         </div>
-        <button onClick={() => {}} className="btn btn-ghost">
+        <div onClick={() => {}} className="btn btn-ghost">
           Slideshow
-        </button>
+        </div>
       </div>
     </div>
   )
