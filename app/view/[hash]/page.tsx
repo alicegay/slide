@@ -210,13 +210,9 @@ const ViewPage = async ({ params }: Props) => {
           {(image.title || image.description) && (
             <div className="card bg-base-200">
               <div className="card-body py-2 px-4">
-                {image.title && (
-                  <h2 className="card-title whitespace-pre-line">
-                    {image.title}
-                  </h2>
-                )}
+                {image.title && <h2 className="card-title">{image.title}</h2>}
                 {image.description && (
-                  <p className="whitespace-pre-line">{image.description}</p>
+                  <p className="whitespace-pre-wrap">{image.description}</p>
                 )}
               </div>
             </div>
@@ -224,7 +220,7 @@ const ViewPage = async ({ params }: Props) => {
 
           {image.translation && (
             <div className="card bg-base-200">
-              <div className="card-body py-2 px-4 whitespace-pre-line">
+              <div className="card-body py-2 px-4 whitespace-pre-wrap">
                 <p>{image.translation}</p>
               </div>
             </div>
@@ -253,7 +249,7 @@ const ViewPage = async ({ params }: Props) => {
             <>
               <span className="text-sm">CHILDREN</span>
               {image.children.map((child) => (
-                <div className="card bg-base-200">
+                <div key={child.hash} className="card bg-base-200">
                   <div className="card-body py-2 px-4 ">
                     <Link
                       className="flex thumbnail-image"

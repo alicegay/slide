@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { Rubik } from 'next/font/google'
+import { Nunito } from 'next/font/google'
 import './globals.css'
 import NextTopLoader from 'nextjs-toploader'
 import NavBar from './NavBar'
 
-const rubik = Rubik({ subsets: ['latin'] })
+const font = Nunito({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'SLIDE',
@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={rubik.className + ' h-screen'}>
+      <body className={font.className + ' h-screen'}>
         <NextTopLoader
           color="#DD2020"
           showSpinner={false}
