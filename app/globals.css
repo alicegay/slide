@@ -16,10 +16,9 @@
   }
 }
 
-/* body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-end-rgb));
-} */
+body {
+  overflow-y: scroll;
+}
 
 .uploadbar {
   width: 40;
@@ -37,4 +36,15 @@
 .view-image {
   height: calc(100vh - 96px);
   object-fit: contain;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #666;
 }

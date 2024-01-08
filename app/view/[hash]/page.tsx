@@ -16,12 +16,25 @@ const ViewPage = async ({ params }: Props) => {
     },
     include: {
       tags: { orderBy: { name: 'asc' } },
-      parent: true,
-      children: { orderBy: { uploaded: 'desc' } },
+      parent: {
+        include: {
+          tags: { select: { name: true } },
+          children: {
+            orderBy: { uploaded: 'desc' },
+            include: { tags: { select: { name: true } } },
+          },
+        },
+      },
+      children: {
+        orderBy: { uploaded: 'desc' },
+        include: { tags: { select: { name: true } } },
+      },
     },
   })
 
   if (!image) return notFound()
+
+  const explicit = image.tags.some((e) => e.name === 'explicit') ? true : false
 
   const tagCount = await prisma.tag.findMany({
     where: {
@@ -161,7 +174,7 @@ const ViewPage = async ({ params }: Props) => {
         )}
         <div className="flex flex-col gap-y-1">
           <span className="text-sm">STATISTICS</span>
-          {image.tags.some((e) => e.name === 'safe') && (
+          {!explicit ? (
             <Link
               className="btn btn-sm justify-between text-green-600"
               href="/search/safe"
@@ -171,8 +184,7 @@ const ViewPage = async ({ params }: Props) => {
                 {tagCount.find((e) => e.name === 'safe')?._count.images}
               </span>
             </Link>
-          )}
-          {image.tags.some((e) => e.name === 'explicit') && (
+          ) : (
             <Link
               className="btn btn-sm justify-between text-red-600"
               href="/search/explicit"
@@ -266,13 +278,48 @@ const ViewPage = async ({ params }: Props) => {
                       href={'/view/' + child.hash}
                     >
                       <img
-                        className={'object-contain'}
+                        className={
+                          'object-contain' +
+                          (!explicit &&
+                          child.tags.some((e) => e.name === 'explicit')
+                            ? ' blur-md hover:blur-none'
+                            : '')
+                        }
                         src={'/thumbnail/' + child.hash + '.webp'}
                       />
                     </Link>
                   </div>
                 </div>
               ))}
+            </>
+          )}
+
+          {image.parent && image.parent.children.length > 1 && (
+            <>
+              <span className="text-sm">SIBLINGS</span>
+              {image.parent.children
+                .filter((child) => child.hash !== params.hash)
+                .map((child) => (
+                  <div key={child.hash} className="card bg-base-200">
+                    <div className="card-body py-2 px-4 ">
+                      <Link
+                        className="flex thumbnail-image"
+                        href={'/view/' + child.hash}
+                      >
+                        <img
+                          className={
+                            'object-contain' +
+                            (!explicit &&
+                            child.tags.some((e) => e.name === 'explicit')
+                              ? ' blur-md hover:blur-none'
+                              : '')
+                          }
+                          src={'/thumbnail/' + child.hash + '.webp'}
+                        />
+                      </Link>
+                    </div>
+                  </div>
+                ))}
             </>
           )}
         </div>
