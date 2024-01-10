@@ -14,7 +14,7 @@ interface Props {
 
 const SearchPage = async ({ params, searchParams }: Props) => {
   const search = params.tags
-    ? String(params.tags).replaceAll('%20', ' ').toLowerCase().split(' ')
+    ? decodeURIComponent(params.tags).toLowerCase().split(' ')
     : []
 
   const sort = searchParams.sort

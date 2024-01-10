@@ -22,9 +22,7 @@ const NavBar = () => {
   const router = useRouter()
   const pathname = usePathname()
   const params = useParams<{ tags: string }>()
-  const urlTags = params.tags
-    ? String(params.tags).replaceAll('%20', ' ')
-    : null
+  const urlTags = params.tags ? decodeURIComponent(params.tags) : null
 
   const [tags, setTags] = useState<string>()
   const [sort, setSort] = useState<Sort>(Sort.UPLOADED)
