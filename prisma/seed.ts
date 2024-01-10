@@ -122,6 +122,9 @@ const main = async () => {
     )
     i++
   })
+
+  const raw =
+    await prisma.$queryRaw`SELECT setval(pg_get_serial_sequence('"Tag"', 'id'), coalesce(max(id)+1, 1), false) FROM "Tag";`
 }
 
 main()
