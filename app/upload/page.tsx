@@ -57,7 +57,7 @@ const UploadEditPage = ({ searchParams }: Props) => {
     setError(undefined)
   }, [pathname, searchParams])
 
-  const tagsRef = useRef(null)
+  const tagsRef = useRef<HTMLTextAreaElement>(null)
 
   const setImage = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -241,12 +241,10 @@ const UploadEditPage = ({ searchParams }: Props) => {
             className="btn btn-sm w-32"
             onClick={async () => {
               try {
-                // @ts-ignore
-                await navigator.clipboard.writeText(tagsRef.current.value)
+                await navigator.clipboard.writeText(tagsRef.current!.value)
                 console.log('COPIED')
               } catch (error) {
-                // @ts-ignore
-                await tagsRef.current!.select()
+                tagsRef.current!.select()
                 document.execCommand('copy')
                 console.log('COPIED (BACKUP)')
               }
