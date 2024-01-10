@@ -5,6 +5,7 @@ import Link from 'next/link'
 import axios, { AxiosRequestConfig } from 'axios'
 import { notFound, useRouter, usePathname } from 'next/navigation'
 import { Prisma } from '@prisma/client'
+import sortRelevantTags from '../lib/sortRelevantTags'
 
 interface Props {
   searchParams: {
@@ -32,6 +33,12 @@ const UploadEditPage = ({ searchParams }: Props) => {
           setEditImage(res.data)
           if (res.data.tags.some((e) => e.name === 'explicit'))
             setExplicit(true)
+          setTags(
+            res.data.tags
+              .map((tag) => tag.name)
+              .filter((tag) => tag !== 'safe' && tag !== 'explicit')
+              .join(' '),
+          )
         })
         .catch(() => {
           notFound()
@@ -43,9 +50,11 @@ const UploadEditPage = ({ searchParams }: Props) => {
   const [hash, setHash] = useState<string>()
   const [showHashError, setShowHashError] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [explicit, setExplicit] = useState(false)
   const [editImage, setEditImage] = useState<ImageWithTags>()
   const [error, setError] = useState<string>()
+
+  const [tags, setTags] = useState<string>('')
+  const [explicit, setExplicit] = useState(false)
 
   useEffect(() => {
     setSelectedImage(undefined)
@@ -56,8 +65,6 @@ const UploadEditPage = ({ searchParams }: Props) => {
     setEditImage(undefined)
     setError(undefined)
   }, [pathname, searchParams])
-
-  const tagsRef = useRef<HTMLTextAreaElement>(null)
 
   const setImage = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -82,6 +89,36 @@ const UploadEditPage = ({ searchParams }: Props) => {
         })
     }
   }, [hash])
+
+  const tagAmount = 8
+  const tagsRef = useRef<HTMLTextAreaElement>(null)
+  const [allTags, setAllTags] = useState<string[]>([])
+  const [lastTag, setLastTag] = useState<string>('')
+  const suRef = [...Array(tagAmount)].map(() => useRef<HTMLDivElement>(null))
+  useEffect(() => {
+    axios
+      .get('/api/tags')
+      .then((res) => {
+        setAllTags(res.data)
+      })
+      .catch((error) => {
+        console.warn('Failed to retrieve tags')
+        console.warn(error)
+      })
+  }, [])
+
+  useEffect(() => {
+    if (tags) {
+      const t = tags.split(' ')[tags.split(' ').length - 1]
+      setLastTag(t)
+    } else setLastTag('')
+  }, [tags])
+
+  const updateLastTag = (tag: string) => {
+    const sp = tags!.split(' ')
+    const sl = sp.slice(0, sp.length - 1)
+    setTags([...sl, tag].join(' ') + ' ')
+  }
 
   const upload = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -208,21 +245,76 @@ const UploadEditPage = ({ searchParams }: Props) => {
           <div className="input w-full bg-base-200 join-item pt-3">{hash}</div>
         </div>
 
-        <textarea
-          ref={tagsRef}
-          name="tags"
-          className="textarea w-full bg-base-200"
-          placeholder="Tags"
-          spellCheck={false}
-          autoComplete="off"
-          defaultValue={
-            editHash &&
-            editImage?.tags
-              .map((tag) => tag.name)
-              .filter((tag) => tag !== 'safe' && tag !== 'explicit')
-              .join(' ')
-          }
-        />
+        <div className="dropdown w-full">
+          <textarea
+            ref={tagsRef}
+            name="tags"
+            className="textarea w-full bg-base-200"
+            placeholder="Tags"
+            spellCheck={false}
+            autoComplete="off"
+            value={tags}
+            onChange={(e) => {
+              setTags(e.currentTarget.value)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault()
+                suRef[0].current?.focus()
+              } else if (e.key === 'Enter') {
+                e.preventDefault()
+              }
+            }}
+          />
+          {lastTag.length >= 3 && (
+            <ul className="absolute z-[1] menu p-2 shadow bg-base-300 rounded-box">
+              {sortRelevantTags(
+                lastTag,
+                allTags.filter((tag) => tag.includes(lastTag)),
+              )
+                .slice(0, tagAmount)
+                .map((tag, i, a) => (
+                  <li key={i}>
+                    <div
+                      ref={suRef[i]}
+                      tabIndex={0}
+                      onClick={() => {
+                        updateLastTag(tag)
+                        tagsRef.current!.select()
+                      }}
+                      onKeyDown={(e) => {
+                        e.preventDefault()
+                        if (e.key === 'Enter') {
+                          updateLastTag(tag)
+                          tagsRef.current!.select()
+                        } else if (e.key === 'ArrowDown') {
+                          const r = i >= a.length - 1 ? 0 : i + 1
+                          suRef[r].current?.focus()
+                        } else if (e.key === 'ArrowUp') {
+                          const r = i <= 0 ? a.length - 1 : i - 1
+                          suRef[r].current?.focus()
+                        } else if (e.key === 'Escape') {
+                          tagsRef.current!.select()
+                          tagsRef.current!.setSelectionRange(
+                            tags!.length,
+                            tags!.length,
+                          )
+                        } else if (e.key === 'Backspace') {
+                          tagsRef.current!.select()
+                          tagsRef.current!.setSelectionRange(
+                            tags!.length - lastTag.length,
+                            tags!.length,
+                          )
+                        }
+                      }}
+                    >
+                      {tag}
+                    </div>
+                  </li>
+                ))}
+            </ul>
+          )}
+        </div>
 
         <div className="flex gap-x-2 items-center">
           <label className="label cursor-pointer w-full">

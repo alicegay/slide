@@ -43,7 +43,7 @@ const NavBar = ({ tags: allTags }: Props) => {
   const suRef = [...Array(tagAmount)].map(() => useRef<HTMLDivElement>(null))
 
   useEffect(() => {
-    if (urlTags) setTags(urlTags)
+    if (urlTags) setTags(urlTags + ' ')
   }, [pathname, params])
 
   useEffect(() => {
@@ -64,6 +64,22 @@ const NavBar = ({ tags: allTags }: Props) => {
     const sl = sp.slice(0, sp.length - 1)
     if (minusTag) setTags([...sl, '-' + tag].join(' ') + ' ')
     else setTags([...sl, tag].join(' ') + ' ')
+  }
+
+  const sortUrl = () => {
+    if (sort !== Sort.UPLOADED && sortDirection !== SortDirection.DESC) {
+      return '?sort=' + sortMap[sort].toLowerCase() + '&dir=asc'
+    } else if (sort !== Sort.UPLOADED) {
+      return '?sort=' + sortMap[sort].toLowerCase()
+    } else if (sortDirection !== SortDirection.DESC) {
+      return '?dir=asc'
+    } else {
+      return ''
+    }
+  }
+
+  const search = () => {
+    router.push('/search/' + tags + sortUrl())
   }
 
   return (
@@ -98,6 +114,8 @@ const NavBar = ({ tags: allTags }: Props) => {
                 if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
                   e.preventDefault()
                   suRef[0].current?.focus()
+                } else if (e.key === 'Enter') {
+                  search()
                 }
               }}
             />
@@ -118,6 +136,7 @@ const NavBar = ({ tags: allTags }: Props) => {
                           searchRef.current!.select()
                         }}
                         onKeyDown={(e) => {
+                          e.preventDefault()
                           if (e.key === 'Enter') {
                             updateLastTag(tag)
                             searchRef.current!.select()
@@ -128,14 +147,12 @@ const NavBar = ({ tags: allTags }: Props) => {
                             const r = i <= 0 ? a.length - 1 : i - 1
                             suRef[r].current?.focus()
                           } else if (e.key === 'Escape') {
-                            e.preventDefault()
                             searchRef.current!.select()
                             searchRef.current!.setSelectionRange(
                               tags!.length,
                               tags!.length,
                             )
                           } else if (e.key === 'Backspace') {
-                            e.preventDefault()
                             searchRef.current!.select()
                             searchRef.current!.setSelectionRange(
                               tags!.length - lastTag.length,
@@ -189,18 +206,7 @@ const NavBar = ({ tags: allTags }: Props) => {
             </ul>
           </div>
         </div>
-        <div
-          onClick={() => {
-            let sortUrl = ''
-            if (sort !== Sort.UPLOADED && sortDirection !== SortDirection.DESC)
-              sortUrl = '?sort=' + sortMap[sort].toLowerCase() + '&dir=asc'
-            else if (sort !== Sort.UPLOADED)
-              sortUrl = '?sort=' + sortMap[sort].toLowerCase()
-            else if (sortDirection !== SortDirection.DESC) sortUrl = '?dir=asc'
-            router.push('/search/' + tags + sortUrl)
-          }}
-          className="btn btn-ghost"
-        >
+        <div onClick={search} className="btn btn-ghost">
           Search
         </div>
         <div onClick={() => {}} className="btn btn-ghost">
