@@ -91,7 +91,7 @@ const NavBar = ({ tags: allTags }: Props) => {
         <Link href="/upload" className="btn btn-ghost">
           Upload
         </Link>
-        <Link href="/tags" className="btn btn-ghost">
+        <Link href="/tags/tag" className="btn btn-ghost">
           Tags
         </Link>
         <Link href="/similar" className="btn btn-ghost">

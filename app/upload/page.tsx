@@ -37,7 +37,7 @@ const UploadEditPage = ({ searchParams }: Props) => {
             res.data.tags
               .map((tag) => tag.name)
               .filter((tag) => tag !== 'safe' && tag !== 'explicit')
-              .join(' '),
+              .join(' ') + ' ',
           )
         })
         .catch(() => {

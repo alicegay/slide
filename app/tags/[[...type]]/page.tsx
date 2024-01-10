@@ -1,6 +1,7 @@
 import prisma from '@/prisma/client'
 import { TagType } from '@prisma/client'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 
 const tagMap: Record<TagType, { label: string; color: string }> = {
   TAG: { label: 'Tag', color: 'bg-slate-600' },
@@ -11,38 +12,75 @@ const tagMap: Record<TagType, { label: string; color: string }> = {
 }
 
 interface Props {
-  searchParams: {
+  params: {
     type?: TagType
   }
 }
 
-const TagsPage = async ({ searchParams }: Props) => {
+const TagsPage = async ({ params }: Props) => {
+  const type = params.type
+    ? (String(params.type).toUpperCase() as TagType)
+    : null
+  if (type && !(type in tagMap)) notFound()
+
   const tags = await prisma.tag.findMany({
-    take: 100,
-    where: { type: searchParams.type?.toUpperCase() as TagType },
+    where: type ? { type: type } : {},
     orderBy: { name: 'asc' },
+    include: {
+      _count: {
+        select: { images: true },
+      },
+    },
   })
 
   return (
-    <div>
+    <div className="flex flex-col gap-y-4">
       <div role="tablist" className="tabs tabs-boxed">
-        <Link href="?" role="tab" className="tab tab-active">
+        <Link
+          href="/tags/"
+          role="tab"
+          className={'tab' + (!type ? ' tab-active' : '')}
+        >
           All
         </Link>
-        <Link href="?type=tag" role="tab" className="tab">
+        <Link
+          href="/tags/tag"
+          role="tab"
+          className={'tab' + (type === 'TAG' ? ' tab-active' : '')}
+        >
           Tags
         </Link>
-        <Link href="?type=artist" role="tab" className="tab">
+        <Link
+          href="/tags/artist"
+          role="tab"
+          className={'tab' + (type === 'ARTIST' ? ' tab-active' : '')}
+        >
           Artists
         </Link>
-        <Link href="?type=series" role="tab" className="tab">
+        <Link
+          href="/tags/series"
+          role="tab"
+          className={'tab' + (type === 'SERIES' ? ' tab-active' : '')}
+        >
           Series
         </Link>
-        <Link href="?type=character" role="tab" className="tab">
+        <Link
+          href="/tags/character"
+          role="tab"
+          className={'tab' + (type === 'CHARACTER' ? ' tab-active' : '')}
+        >
           Characters
         </Link>
-        <Link href="?type=info" role="tab" className="tab">
+        <Link
+          href="/tags/info"
+          role="tab"
+          className={'tab' + (type === 'INFO' ? ' tab-active' : '')}
+        >
           Info
+        </Link>
+
+        <Link href="/tags/new" role="tab" className={'tab'}>
+          New Tag
         </Link>
       </div>
 
@@ -67,7 +105,9 @@ const TagsPage = async ({ searchParams }: Props) => {
                   >
                     {tag.name}
                   </Link>
-                  <span className="badge bg-slate-600 ml-2">0</span>
+                  <span className="badge bg-slate-600 ml-2">
+                    {tag._count.images}
+                  </span>
                 </td>
                 <td>
                   <span className={'badge ' + tagMap[tag.type].color}>
@@ -82,7 +122,6 @@ const TagsPage = async ({ searchParams }: Props) => {
                   >
                     Edit
                   </Link>
-                  <button className="btn btn-ghost btn-xs">Delete</button>
                 </td>
               </tr>
             ))}

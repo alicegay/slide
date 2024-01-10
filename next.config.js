@@ -15,6 +15,10 @@ const nextConfig = {
         source: '/edit/:hash',
         destination: '/upload',
       },
+      {
+        source: '/tags/edit/:name',
+        destination: '/tags/new',
+      },
     ]
   },
 }
