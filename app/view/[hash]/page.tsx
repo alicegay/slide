@@ -67,7 +67,9 @@ const ViewPage = async ({ params }: Props) => {
             <span className="text-sm">ARTIST</span>
             {image.tags.map(
               (tag) =>
-                tag.type === 'ARTIST' && (
+                tag.type === 'ARTIST' &&
+                tag.name !== 'safe' &&
+                tag.name !== 'explicit' && (
                   <Link
                     key={tag.id}
                     className="btn btn-sm justify-between text-red-600"
@@ -87,7 +89,9 @@ const ViewPage = async ({ params }: Props) => {
             <span className="text-sm">CHARACTERS</span>
             {image.tags.map(
               (tag) =>
-                tag.type === 'CHARACTER' && (
+                tag.type === 'CHARACTER' &&
+                tag.name !== 'safe' &&
+                tag.name !== 'explicit' && (
                   <Link
                     key={tag.id}
                     className="btn btn-sm justify-between flex-nowrap text-green-600"
@@ -109,7 +113,9 @@ const ViewPage = async ({ params }: Props) => {
             <span className="text-sm">SERIES</span>
             {image.tags.map(
               (tag) =>
-                tag.type === 'SERIES' && (
+                tag.type === 'SERIES' &&
+                tag.name !== 'safe' &&
+                tag.name !== 'explicit' && (
                   <Link
                     key={tag.id}
                     className="btn btn-sm justify-between flex-nowrap text-violet-600"
@@ -131,7 +137,9 @@ const ViewPage = async ({ params }: Props) => {
             <span className="text-sm">INFO</span>
             {image.tags.map(
               (tag) =>
-                tag.type === 'INFO' && (
+                tag.type === 'INFO' &&
+                tag.name !== 'safe' &&
+                tag.name !== 'explicit' && (
                   <Link
                     key={tag.id}
                     className="btn btn-sm justify-between flex-nowrap text-amber-600"
