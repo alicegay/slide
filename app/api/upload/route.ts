@@ -69,7 +69,7 @@ export const POST = async (request: NextRequest) => {
   }
 
   const tagsArray = formData.get('tags')
-    ? (formData.get('tags') as string).split(' ')
+    ? (formData.get('tags') as string).trim().split(' ')
     : []
   const tagArray = await prisma.tag.findMany({
     where: {
