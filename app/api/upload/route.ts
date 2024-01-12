@@ -6,6 +6,7 @@ import { z } from 'zod'
 import prisma from '@/prisma/client'
 import formatZodError from '@/app/lib/formatZodError'
 import sizeOf from 'buffer-image-size'
+import sharp from 'sharp'
 
 export const schema = z.object({
   tags: z.string(),
@@ -67,6 +68,11 @@ export const POST = async (request: NextRequest) => {
     console.log('Error occured ', error)
     return NextResponse.json({ error: 'Image upload failed.' }, { status: 500 })
   }
+
+  await sharp(buffer)
+    .resize(448, 448, { fit: 'inside' })
+    .webp()
+    .toFile(path.join(process.cwd(), 'public/thumbnail/' + hash + '.webp'))
 
   const tagsArray = formData.get('tags')
     ? (formData.get('tags') as string).trim().split(' ')
