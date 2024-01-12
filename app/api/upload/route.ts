@@ -7,6 +7,7 @@ import prisma from '@/prisma/client'
 import formatZodError from '@/app/lib/formatZodError'
 import sizeOf from 'buffer-image-size'
 import sharp from 'sharp'
+import imageAverage from '@/app/lib/imageAverage'
 
 export const schema = z.object({
   tags: z.string(),
@@ -61,6 +62,7 @@ export const POST = async (request: NextRequest) => {
 
   const buffer = Buffer.from(await file.arrayBuffer())
   const dimensions = sizeOf(buffer)
+  const average = await imageAverage(buffer)
 
   try {
     await writeFile(path.join(process.cwd(), 'public/image/' + hash), buffer)
@@ -104,7 +106,7 @@ export const POST = async (request: NextRequest) => {
   const newImage = await prisma.image.create({
     data: {
       hash: hash,
-      average: '', // todo))
+      average: average,
       source: formData.get('source')
         ? (formData.get('source') as string)
         : null,
