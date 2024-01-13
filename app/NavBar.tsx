@@ -195,7 +195,8 @@ const NavBar = ({ tags: allTags }: Props) => {
                     }}
                   >
                     {sortMap[s]}{' '}
-                    {sortDirection === SortDirection.DESC ? (
+                    {(sort === s && sortDirection === SortDirection.DESC) ||
+                    (sort !== s && sortDirection === SortDirection.ASC) ? (
                       <MdExpandLess />
                     ) : (
                       <MdExpandMore />
