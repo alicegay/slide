@@ -78,8 +78,21 @@ const NavBar = ({ tags: allTags }: Props) => {
     }
   }
 
-  const search = () => {
-    router.push('/search/' + tags + sortUrl())
+  const search = (e?: any, rightClick: boolean = false) => {
+    if (rightClick) {
+      e.preventDefault()
+      window.open('/search/' + tags + sortUrl(), '_blank')
+    } else {
+      router.push('/search/' + tags + sortUrl())
+    }
+  }
+  const slide = (e?: any, rightClick: boolean = false) => {
+    if (rightClick) {
+      e.preventDefault()
+      window.open('/slide/' + tags + sortUrl(), '_blank')
+    } else {
+      router.push('/slide/' + tags + sortUrl())
+    }
   }
 
   return (
@@ -207,10 +220,22 @@ const NavBar = ({ tags: allTags }: Props) => {
             </ul>
           </div>
         </div>
-        <div onClick={search} className="btn btn-ghost">
+        <div
+          onClick={search}
+          onContextMenu={(e) => {
+            search(e, true)
+          }}
+          className="btn btn-ghost"
+        >
           Search
         </div>
-        <div onClick={() => {}} className="btn btn-ghost">
+        <div
+          onClick={slide}
+          onContextMenu={(e) => {
+            slide(e, true)
+          }}
+          className="btn btn-ghost"
+        >
           Slideshow
         </div>
       </div>

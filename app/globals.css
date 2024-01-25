@@ -37,6 +37,12 @@ body {
   height: calc(100vh - 96px);
   object-fit: contain;
 }
+.text-shadow {
+  text-shadow: -1px 0 1px #222, 1px 0 1px #222, 0 -1px 1px #222, 0 1px 1px #222;
+}
+.no-scroll {
+  overflow-y: hidden;
+}
 
 ::-webkit-scrollbar {
   width: 8px;
