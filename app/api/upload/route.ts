@@ -9,7 +9,7 @@ import sizeOf from 'buffer-image-size'
 import sharp from 'sharp'
 import imageAverage from '@/app/lib/imageAverage'
 
-export const schema = z.object({
+const schema = z.object({
   tags: z.string(),
   source: z
     .string()

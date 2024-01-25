@@ -1,7 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/prisma/client'
-import { schema } from '../../upload/route'
+import { z } from 'zod'
 import formatZodError from '@/app/lib/formatZodError'
+
+const schema = z.object({
+  tags: z.string(),
+  source: z
+    .string()
+    .url({ message: 'Source URL is invalid' })
+    .or(z.string().length(0)),
+  parent: z
+    .string()
+    .length(32, { message: 'Parent Hash is invalid' })
+    .or(z.string().length(0)),
+  title: z.string(),
+  description: z.string(),
+  translation: z.string(),
+})
 
 interface Props {
   params: {
