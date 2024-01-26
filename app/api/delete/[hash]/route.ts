@@ -29,9 +29,9 @@ export const DELETE = async (request: NextRequest, { params }: Props) => {
   })
 
   try {
-    await unlink(path.join(process.cwd(), 'public/image/' + params.hash))
+    await unlink(path.join(process.cwd(), 'data/image/' + params.hash))
     await unlink(
-      path.join(process.cwd(), 'public/thumbnail/' + params.hash + '.webp'),
+      path.join(process.cwd(), 'data/thumbnail/' + params.hash + '.webp'),
     )
   } catch (error) {
     console.warn('Error deleting images')

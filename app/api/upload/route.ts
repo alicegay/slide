@@ -65,7 +65,7 @@ export const POST = async (request: NextRequest) => {
   const average = await imageAverage(buffer)
 
   try {
-    await writeFile(path.join(process.cwd(), 'public/image/' + hash), buffer)
+    await writeFile(path.join(process.cwd(), 'data/image/' + hash), buffer)
   } catch (error) {
     console.log('Error occured ', error)
     return NextResponse.json({ error: 'Image upload failed.' }, { status: 500 })
@@ -74,7 +74,7 @@ export const POST = async (request: NextRequest) => {
   await sharp(buffer)
     .resize(448, 448, { fit: 'inside' })
     .webp()
-    .toFile(path.join(process.cwd(), 'public/thumbnail/' + hash + '.webp'))
+    .toFile(path.join(process.cwd(), 'data/thumbnail/' + hash + '.webp'))
 
   const tagsArray = formData.get('tags')
     ? (formData.get('tags') as string).trim().split(' ')

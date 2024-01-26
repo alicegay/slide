@@ -273,7 +273,7 @@ const ViewPage = async ({ params }: Props) => {
                           ? ' blur-md hover:blur-none'
                           : '')
                       }
-                      src={'/thumbnail/' + image.parent.hash + '.webp'}
+                      src={'/thumbnail/' + image.parent.hash}
                     />
                   </Link>
                 </div>
@@ -299,7 +299,7 @@ const ViewPage = async ({ params }: Props) => {
                             ? ' blur-md hover:blur-none'
                             : '')
                         }
-                        src={'/thumbnail/' + child.hash + '.webp'}
+                        src={'/thumbnail/' + child.hash}
                       />
                     </Link>
                   </div>
@@ -328,7 +328,7 @@ const ViewPage = async ({ params }: Props) => {
                               ? ' blur-md hover:blur-none'
                               : '')
                           }
-                          src={'/thumbnail/' + child.hash + '.webp'}
+                          src={'/thumbnail/' + child.hash}
                         />
                       </Link>
                     </div>

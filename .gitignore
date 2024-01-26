@@ -36,6 +36,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+data/
 public/image/*
 public/thumbnail/*
 prisma/images.json

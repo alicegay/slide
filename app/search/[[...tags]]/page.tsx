@@ -79,7 +79,7 @@ const SearchPage = async ({ params, searchParams }: Props) => {
           >
             <Link href={'/view/' + image.hash} className="h-full">
               <img
-                src={'/thumbnail/' + image.hash + '.webp'}
+                src={'/thumbnail/' + image.hash}
                 className="h-full object-contain"
               />
             </Link>
