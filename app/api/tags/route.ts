@@ -6,3 +6,5 @@ export const GET = async (request: NextRequest) => {
   const array = tags.map((tag) => tag.name)
   return NextResponse.json(array, { status: 200 })
 }
+
+export const dynamic = 'force-dynamic'
