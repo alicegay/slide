@@ -81,17 +81,17 @@ const NavBar = ({ tags: allTags }: Props) => {
   const search = (e?: any, rightClick: boolean = false) => {
     if (rightClick) {
       e.preventDefault()
-      window.open('/search/' + tags + sortUrl(), '_blank')
+      window.open('/search/' + tags.trim() + sortUrl(), '_blank')
     } else {
-      router.push('/search/' + tags + sortUrl())
+      router.push('/search/' + tags.trim() + sortUrl())
     }
   }
   const slide = (e?: any, rightClick: boolean = false) => {
     if (rightClick) {
       e.preventDefault()
-      window.open('/slide/' + tags + sortUrl(), '_blank')
+      window.open('/slide/' + tags.trim() + sortUrl(), '_blank')
     } else {
-      router.push('/slide/' + tags + sortUrl())
+      router.push('/slide/' + tags.trim() + sortUrl())
     }
   }
 

@@ -1,5 +1,6 @@
 import prisma from '@/prisma/client'
 import SlideImage from './SlideImage'
+import { notFound } from 'next/navigation'
 
 interface Props {
   params: {
@@ -41,6 +42,8 @@ const SlidePage = async ({ params, searchParams }: Props) => {
       AND: query,
     },
   })
+
+  if (images.length === 0) notFound()
 
   return <SlideImage images={images} />
 }
