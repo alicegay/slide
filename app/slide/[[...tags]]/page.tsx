@@ -45,7 +45,11 @@ const SlidePage = async ({ params, searchParams }: Props) => {
 
   if (images.length === 0) notFound()
 
-  return <SlideImage images={images} />
+  if (searchParams.sort == 'random') {
+    return <SlideImage images={images.sort(() => Math.random() - 0.5)} />
+  } else {
+    return <SlideImage images={images} />
+  }
 }
 
 export default SlidePage

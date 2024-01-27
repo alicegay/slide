@@ -8,6 +8,7 @@ import sortRelevantTags from './lib/sortRelevantTags'
 enum Sort {
   UPLOADED,
   HASH,
+  RANDOM,
 }
 enum SortDirection {
   DESC,
@@ -16,8 +17,9 @@ enum SortDirection {
 const sortMap: Record<Sort, string> = {
   0: 'Uploaded',
   1: 'Hash',
+  2: 'Random',
 }
-const sortArray = [Sort.UPLOADED, Sort.HASH]
+const sortArray = [Sort.UPLOADED, Sort.HASH, Sort.RANDOM]
 
 interface Props {
   tags: string[]
