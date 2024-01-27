@@ -1,3 +1,4 @@
+import formatFilesize from '@/app/lib/formatFilesize'
 import formatSource from '@/app/lib/formatSource'
 import prisma from '@/prisma/client'
 import Link from 'next/link'
@@ -204,7 +205,7 @@ const ViewPage = async ({ params }: Props) => {
             </Link>
           )}
           <div className="btn btn-sm justify-between">
-            {Math.round(image.filesize / 10.24) / 100 + ' KB ' + image.filetype}
+            {formatFilesize(image.filesize) + ' ' + image.filetype}
           </div>
           <div className="btn btn-sm justify-between">
             {image.width + ' × ' + image.height}
