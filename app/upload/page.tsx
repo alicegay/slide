@@ -191,9 +191,9 @@ const UploadEditPage = ({ searchParams }: Props) => {
       })
   }
 
-  const Image = memo(({ src }: { src?: string }) => (
-    <img src={src} className="view-image" />
-  ))
+  const Image = memo(function Image({ src }: { src?: string }) {
+    return <img src={src} className="view-image" />
+  })
 
   return (
     <div className="flex w-full gap-x-4">
