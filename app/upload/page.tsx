@@ -1,5 +1,12 @@
 'use client'
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react'
+import {
+  ChangeEvent,
+  FormEvent,
+  memo,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import md5 from 'md5'
 import Link from 'next/link'
 import axios, { AxiosRequestConfig } from 'axios'
@@ -51,6 +58,7 @@ const UploadEditPage = ({ searchParams }: Props) => {
   const [showHashError, setShowHashError] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [editImage, setEditImage] = useState<ImageWithTags>()
+  const [imageSource, setImageSource] = useState<string | undefined>(undefined)
   const [error, setError] = useState<string>()
 
   const [tags, setTags] = useState<string>('')
@@ -63,6 +71,7 @@ const UploadEditPage = ({ searchParams }: Props) => {
     setUploadProgress(0)
     setExplicit(false)
     setEditImage(undefined)
+    setImageSource(undefined)
     setError(undefined)
   }, [pathname, searchParams])
 
@@ -88,7 +97,14 @@ const UploadEditPage = ({ searchParams }: Props) => {
           setShowHashError(false)
         })
     }
+    if (editHash) {
+      setImageSource('/image/' + editHash)
+    }
   }, [hash])
+
+  useEffect(() => {
+    if (selectedImage) setImageSource(URL.createObjectURL(selectedImage))
+  }, [selectedImage])
 
   const tagAmount = 8
   const tagsRef = useRef<HTMLTextAreaElement>(null)
@@ -149,9 +165,6 @@ const UploadEditPage = ({ searchParams }: Props) => {
   const edit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    const options: AxiosRequestConfig = {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }
     axios
       .patch('/api/edit/' + editHash, formData)
       .then((res) => {
@@ -177,6 +190,10 @@ const UploadEditPage = ({ searchParams }: Props) => {
         console.warn(error)
       })
   }
+
+  const Image = memo(({ src }: { src?: string }) => (
+    <img src={src} className="view-image" />
+  ))
 
   return (
     <div className="flex w-full gap-x-4">
@@ -449,14 +466,7 @@ const UploadEditPage = ({ searchParams }: Props) => {
       </form>
 
       <div className="view-image">
-        <img
-          src={
-            editHash
-              ? '/image/' + editHash
-              : selectedImage && URL.createObjectURL(selectedImage)
-          }
-          className="view-image"
-        />
+        <Image src={imageSource} />
       </div>
     </div>
   )
