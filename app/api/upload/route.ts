@@ -108,7 +108,7 @@ export const POST = async (request: NextRequest) => {
       hash: hash,
       average: average,
       source: formData.get('source')
-        ? (formData.get('source') as string)
+        ? (formData.get('source') as string).replace('x.com/', 'twitter.com/')
         : null,
       filetype: file.type.split('/')[1],
       filesize: file.size,
