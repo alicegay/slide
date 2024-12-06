@@ -2,17 +2,19 @@ import prisma from '@/prisma/client'
 import Link from 'next/link'
 
 interface Props {
-  params: {
+  params: Promise<{
     tags: string
-  }
-  searchParams: {
+  }>
+  searchParams: Promise<{
     page: number
     sort: string
     dir: string
-  }
+  }>
 }
 
-const SearchPage = async ({ params, searchParams }: Props) => {
+const SearchPage = async (props: Props) => {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const search = params.tags
     ? decodeURIComponent(params.tags).toLowerCase().split(' ')
     : []

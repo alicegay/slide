@@ -19,12 +19,13 @@ const schema = z.object({
 })
 
 interface Props {
-  params: {
+  params: Promise<{
     hash: string
-  }
+  }>
 }
 
-export const PATCH = async (request: NextRequest, { params }: Props) => {
+export const PATCH = async (request: NextRequest, props: Props) => {
+  const params = await props.params;
   const formData = await request.formData()
 
   const image = await prisma.image.findUnique({

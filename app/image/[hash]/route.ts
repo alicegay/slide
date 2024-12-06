@@ -4,12 +4,13 @@ import { readFile } from 'fs/promises'
 import prisma from '@/prisma/client'
 
 interface Props {
-  params: {
+  params: Promise<{
     hash: string
-  }
+  }>
 }
 
-export const GET = async (request: NextRequest, { params }: Props) => {
+export const GET = async (request: NextRequest, props: Props) => {
+  const params = await props.params;
   const image = await prisma.image.findUnique({
     where: {
       hash: params.hash,

@@ -1,12 +1,5 @@
 'use client'
-import {
-  ChangeEvent,
-  FormEvent,
-  memo,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { ChangeEvent, FormEvent, memo, useEffect, useRef, useState, use } from 'react';
 import md5 from 'md5'
 import Link from 'next/link'
 import axios, { AxiosRequestConfig } from 'axios'
@@ -15,9 +8,9 @@ import { Prisma } from '@prisma/client'
 import sortRelevantTags from '../lib/sortRelevantTags'
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     hash: string
-  }
+  }>
 }
 
 const imageWithTags = Prisma.validator<Prisma.ImageDefaultArgs>()({
@@ -26,7 +19,8 @@ const imageWithTags = Prisma.validator<Prisma.ImageDefaultArgs>()({
 
 type ImageWithTags = Prisma.ImageGetPayload<typeof imageWithTags>
 
-const UploadEditPage = ({ searchParams }: Props) => {
+const UploadEditPage = (props: Props) => {
+  const searchParams = use(props.searchParams);
   const router = useRouter()
   const pathname = usePathname()
 

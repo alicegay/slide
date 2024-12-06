@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/prisma/client'
 
 interface Props {
-  params: {
+  params: Promise<{
     name: string
-  }
+  }>
 }
 
-export const GET = async (request: NextRequest, { params }: Props) => {
+export const GET = async (request: NextRequest, props: Props) => {
+  const params = await props.params;
   const tag = await prisma.tag.findUnique({
     where: {
       name: params.name,

@@ -5,12 +5,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 interface Props {
-  params: {
+  params: Promise<{
     hash: string
-  }
+  }>
 }
 
-const ViewPage = async ({ params }: Props) => {
+const ViewPage = async (props: Props) => {
+  const params = await props.params
   const image = await prisma.image.findUnique({
     where: {
       hash: params.hash,

@@ -2,16 +2,17 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import Link from 'next/link'
 import { notFound, usePathname, useRouter } from 'next/navigation'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState, use } from 'react';
 import { Prisma, Tag } from '@prisma/client'
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     name: string
-  }
+  }>
 }
 
-const TagViewPage = ({ searchParams }: Props) => {
+const TagViewPage = (props: Props) => {
+  const searchParams = use(props.searchParams);
   const router = useRouter()
   const pathname = usePathname()
 

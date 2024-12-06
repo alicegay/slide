@@ -3,16 +3,18 @@ import SlideImage from './SlideImage'
 import { notFound } from 'next/navigation'
 
 interface Props {
-  params: {
+  params: Promise<{
     tags: string
-  }
-  searchParams: {
+  }>
+  searchParams: Promise<{
     sort: string
     dir: string
-  }
+  }>
 }
 
-const SlidePage = async ({ params, searchParams }: Props) => {
+const SlidePage = async (props: Props) => {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const search = params.tags
     ? decodeURIComponent(params.tags).toLowerCase().split(' ')
     : []

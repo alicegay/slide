@@ -12,12 +12,13 @@ const tagMap: Record<TagType, { label: string; color: string }> = {
 }
 
 interface Props {
-  params: {
+  params: Promise<{
     type?: TagType
-  }
+  }>
 }
 
-const TagsPage = async ({ params }: Props) => {
+const TagsPage = async (props: Props) => {
+  const params = await props.params;
   const type = params.type
     ? (String(params.type).toUpperCase() as TagType)
     : null

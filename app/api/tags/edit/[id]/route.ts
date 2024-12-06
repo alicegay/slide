@@ -3,12 +3,13 @@ import prisma from '@/prisma/client'
 import { TagType } from '@prisma/client'
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export const PATCH = async (request: NextRequest, { params }: Props) => {
+export const PATCH = async (request: NextRequest, props: Props) => {
+  const params = await props.params;
   const formData = await request.formData()
 
   const id = Number(params.id)
